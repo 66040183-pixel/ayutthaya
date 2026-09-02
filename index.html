@@ -170,7 +170,7 @@
         .req-tag {
             background: #3a2218; border: 1px solid var(--gold);
             padding: 1px 5px; border-radius: 5px; font-size: 0.65rem; color: var(--cream);
-            display: flex; align-items: center; gap: 2px;
+            display: flex; align-items: center; gap: 4px;
         }
         .req-tag.fulfilled { background: #1b4d1b; border-color: #00ff00; text-decoration: line-through; opacity: 0.55; }
 
@@ -198,7 +198,14 @@
             content: "ตราคลัง"; position: absolute; top: 2px; right: 2px;
             background: var(--crimson); color: #fff; font-size: 0.5rem; padding: 1px 4px; border-radius: 4px; font-weight: bold;
         }
-        .item-icon { font-size: 1.6rem; margin-bottom: 2px; }
+        
+        /* สไตล์สำหรับรูปภาพสินค้า */
+        .item-icon-img {
+            width: 38px;
+            height: 38px;
+            object-fit: contain;
+            margin-bottom: 2px;
+        }
 
         /* Cursor & Notification */
         #hand-cursor {
@@ -210,7 +217,7 @@
         #hand-cursor.pinching { width: 16px; height: 16px; background: #ff3333; border-color: var(--gold); }
 
         #dragged-item-ghost {
-            position: absolute; font-size: 3rem; pointer-events: none;
+            position: absolute; pointer-events: none;
             z-index: 100; transform: translate(-50%, -50%); display: none;
             filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
         }
@@ -281,7 +288,7 @@
     <video id="webcam" playsinline></video>
     
     <div id="hand-cursor"></div>
-    <div id="dragged-item-ghost">🪵</div>
+    <div id="dragged-item-ghost"></div>
     <div id="notification-box">ยินดีต้อนรับสู่ท่าเรืออยุธยา!</div>
 
     <!-- Royal Shop Panel -->
@@ -399,18 +406,19 @@
         osc.connect(gain); gain.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime + 0.25);
     }
 
+    // กำหนดไฟล์รูปภาพสินค้าแต่ละชนิด
     const ITEMS = {
-        rice: { id: 'rice', name: 'ข้าวสาร', monopoly: false, value: 100, icon: '🌾' },
-        pepper: { id: 'pepper', name: 'พริกไทย', monopoly: false, value: 120, icon: '🌶️' },
-        sugar: { id: 'sugar', name: 'น้ำตาล', monopoly: false, value: 110, icon: '🍬' },
-        nest: { id: 'nest', name: 'รังนก', monopoly: false, value: 150, icon: '🪹' },
-        cotton: { id: 'cotton', name: 'ผ้าฝ้าย', monopoly: false, value: 130, icon: '🧶' },
-        wood: { id: 'wood', name: 'ไม้กฤษณา', monopoly: true, value: 200, icon: '🪵' },
-        tin: { id: 'tin', name: 'ดีบุก', monopoly: true, value: 250, icon: '🧱' },
-        ivory: { id: 'ivory', name: 'งาช้าง', monopoly: true, value: 300, icon: '🐘' },
-        gun: { id: 'gun', name: 'อาวุธปืน', monopoly: true, value: 350, icon: '🔫' },
-        iron: { id: 'iron', name: 'แร่อกไก่', monopoly: true, value: 280, icon: '⛏️' },
-        hide: { id: 'hide', name: 'หนังสัตว์', monopoly: true, value: 220, icon: '📜' }
+        rice: { id: 'rice', name: 'ข้าวสาร', monopoly: false, value: 100, icon: 'rice.png' },
+        pepper: { id: 'pepper', name: 'พริกไทย', monopoly: false, value: 120, icon: 'pepper.png' },
+        sugar: { id: 'sugar', name: 'น้ำตาล', monopoly: false, value: 110, icon: 'sugar.png' },
+        nest: { id: 'nest', name: 'รังนก', monopoly: false, value: 150, icon: 'nest.png' },
+        cotton: { id: 'cotton', name: 'ผ้าฝ้าย', monopoly: false, value: 130, icon: 'cotton.png' },
+        wood: { id: 'wood', name: 'ไม้กฤษณา', monopoly: true, value: 200, icon: 'wood.png' },
+        tin: { id: 'tin', name: 'ดีบุก', monopoly: true, value: 250, icon: 'tin.png' },
+        ivory: { id: 'ivory', name: 'งาช้าง', monopoly: true, value: 300, icon: 'ivory.png' },
+        gun: { id: 'gun', name: 'อาวุธปืน', monopoly: true, value: 350, icon: 'gun.png' },
+        iron: { id: 'iron', name: 'แร่อกไก่', monopoly: true, value: 280, icon: 'iron.png' },
+        hide: { id: 'hide', name: 'หนังสัตว์', monopoly: true, value: 220, icon: 'hide.png' }
     };
 
     const REWARDS = {
@@ -509,6 +517,7 @@
         }
     }
 
+    // ฟังก์ชันสร้างรายการสินค้าแถบด้านล่างโดยใช้รูปภาพ
     function renderInventory() {
         const tray = document.getElementById('inventory-tray');
         tray.innerHTML = '';
@@ -517,7 +526,7 @@
             card.className = `item-card ${item.monopoly ? 'monopoly' : ''}`;
             card.dataset.id = item.id;
             card.onclick = () => selectItem(item.id);
-            card.innerHTML = `<div class="item-icon">${item.icon}</div><div>${item.name}</div>`;
+            card.innerHTML = `<img src="${item.icon}" class="item-icon-img" alt="${item.name}"><div>${item.name}</div>`;
             tray.appendChild(card);
         });
     }
@@ -600,6 +609,7 @@
         showNotification(`🚢 เรือจาก${shipData.country} เข้าเทียบท่า! (35 วินาที)`);
     }
 
+    // อัปเดต UI รายการสินค้าที่เรือต้องการ (แสดงเป็นไอคอนรูปภาพขนาดเล็ก)
     function updateShipUI() {
         if (!gameState.currentShip) return;
         document.getElementById('ship-title').innerText = `🚢 ${gameState.currentShip.country}`;
@@ -609,7 +619,7 @@
         gameState.currentShip.reqItems.forEach(req => {
             const tag = document.createElement('div');
             tag.className = `req-tag ${req.fulfilled ? 'fulfilled' : ''}`;
-            tag.innerHTML = `${req.item.icon} ${req.item.name}`;
+            tag.innerHTML = `<img src="${req.item.icon}" style="width: 14px; height: 14px; object-fit: contain;"> ${req.item.name}`;
             reqListEl.appendChild(tag);
         });
     }
@@ -661,7 +671,9 @@
             document.getElementById('royal-seal-zone').classList.remove('approved');
             document.getElementById('seal-text').innerText = "ลากมาประทับ";
         }
-        document.getElementById('dragged-item-ghost').innerText = gameState.selectedItem.icon;
+        
+        // กำหนดรูปภาพให้ผีเสื้อ/ตัวลากตามสินค้าที่เลือก
+        document.getElementById('dragged-item-ghost').innerHTML = `<img src="${gameState.selectedItem.icon}" style="width: 48px; height: 48px; object-fit: contain;">`;
     }
 
     /* MediaPipe Hands Tracking Setup */
@@ -699,14 +711,12 @@
             const indexTip = landmarks[8];
             const thumbTip = landmarks[4];
 
-            // Convert landmark coordinates (0-1) to screen pixels (flipped X)
             cursorX = (1 - indexTip.x) * window.innerWidth;
             cursorY = indexTip.y * window.innerHeight;
 
             cursor.style.left = `${cursorX}px`;
             cursor.style.top = `${cursorY}px`;
 
-            // Pinch Detection (distance between index and thumb)
             const distance = Math.hypot(
                 (indexTip.x - thumbTip.x) * window.innerWidth,
                 (indexTip.y - thumbTip.y) * window.innerHeight
@@ -728,9 +738,7 @@
 
     function handlePinchStart() {
         if (!gameState.isPlaying) return;
-        const sealRect = document.getElementById('royal-seal-zone').getBoundingClientRect();
         
-        // Check if pinching over inventory items
         const itemCards = document.querySelectorAll('.item-card');
         itemCards.forEach(card => {
             const rect = card.getBoundingClientRect();
@@ -747,7 +755,6 @@
             ghost.style.left = `${cursorX}px`;
             ghost.style.top = `${cursorY}px`;
 
-            // Check collision with Royal Seal Zone
             const sealRect = document.getElementById('royal-seal-zone').getBoundingClientRect();
             if (cursorX >= sealRect.left && cursorX <= sealRect.right && cursorY >= sealRect.top && cursorY <= sealRect.bottom) {
                 if (gameState.selectedItem.monopoly && !gameState.isApproved) {
@@ -769,7 +776,6 @@
             const shipRect = document.getElementById('single-ship-card').getBoundingClientRect();
             const shipImgRect = document.getElementById('ship-image').getBoundingClientRect();
 
-            // Check if dropped near the ship area
             const isOverShip = (cursorX >= shipImgRect.left && cursorX <= shipImgRect.right && cursorY >= shipImgRect.top && cursorY <= shipImgRect.bottom) ||
                                (cursorX >= shipRect.left && cursorX <= shipRect.right && cursorY >= shipRect.top && cursorY <= shipRect.bottom);
 
@@ -782,10 +788,10 @@
     function deliverItem() {
         if (!gameState.selectedItem || !gameState.currentShip) return;
 
-        // ตรวจสอบกรณีส่งสินค้าผูกขาดโดยไม่ได้ประทับตราพระคลัง -> หักคะแนนและเหรียญเงิน
+        // หากสินค้าเป็นสินค้าผูกขาด แต่ยังไม่ได้ประทับตราพระคลัง -> หักคะแนนและเงิน
         if (gameState.selectedItem.monopoly && !gameState.isApproved) {
-            const scorePenalty = Math.floor(Math.random() * 21) + 30; // สุ่มหักคะแนน 30 - 50
-            const coinPenalty = Math.floor(Math.random() * 11) + 10;   // สุ่มหักเหรียญ 10 - 20
+            const scorePenalty = Math.floor(Math.random() * 21) + 30; // สุ่มหักคะแนน 30-50
+            const coinPenalty = Math.floor(Math.random() * 11) + 10;   // สุ่มหักเงิน 10-20
 
             gameState.score = Math.max(0, gameState.score - scorePenalty);
             gameState.coins = Math.max(0, gameState.coins - coinPenalty);
@@ -794,7 +800,6 @@
             updateHUD();
             showNotification(`⚠️ ลืมประทับตรา! โดนปรับคะแนน -${scorePenalty} และ -${coinPenalty} เหรียญ!`);
 
-            // รีเซ็ตสถานะตัวเลือกสินค้า
             gameState.selectedItem = null;
             gameState.isApproved = false;
             document.querySelectorAll('.item-card').forEach(c => c.classList.remove('selected'));
@@ -826,7 +831,6 @@
             showNotification("❌ เรือลำนี้ไม่ต้องการสินค้านี้!");
         }
 
-        // Reset Selected Item State
         gameState.selectedItem = null;
         gameState.isApproved = false;
         document.querySelectorAll('.item-card').forEach(c => c.classList.remove('selected'));
