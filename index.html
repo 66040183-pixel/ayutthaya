@@ -350,7 +350,7 @@
                 <ul>
                     <li>🪙 <b>ร้านค้าคลังหลวง:</b> สะสมเหรียญเงินเพื่อใช้ซื้อเวลาเพิ่ม, อนุมัติสินค้าอัตโนมัติ หรือส่งสินค้าด่วน!</li>
                     <li>👌 <b>ควบคุมด้วยมือ:</b> จีบนิ้ว (Thumb & Index Pinch) เพื่อจับสินค้าลากไปส่งให้เรือสำเภาทางซ้าย</li>
-                    <li>📜 <b>สินค้าผูกขาด (ตราคลัง):</b> สินค้าที่มีสัญลักษณ์ต้องลากไปประทับ **"ตราพระคลัง"** (ขวาบน) ก่อนส่งเรือ</li>
+                    <li>📜 <b>สินค้าผูกขาด (ตราคลัง):</b> สินค้าที่มีสัญลักษณ์ต้องลากไปประทับ **"ตราพระคลัง"** (ขวาบน) ก่อนส่งเรือ <span style="color: #ff6b6b;">(หากลืมประทับตราแล้วส่ง จะถูกหัก 30-50 คะแนน และ 10-20 เหรียญ!)</span></li>
                     <li>🎁 <b>ของรางวัล:</b> ส่งสินค้าครบถ้วน ได้รับของสะสมบันทึกลงใน **สมุดบันทึกสำเภา**!</li>
                 </ul>
             </div>
@@ -782,9 +782,24 @@
     function deliverItem() {
         if (!gameState.selectedItem || !gameState.currentShip) return;
 
+        // ตรวจสอบกรณีส่งสินค้าผูกขาดโดยไม่ได้ประทับตราพระคลัง -> หักคะแนนและเหรียญเงิน
         if (gameState.selectedItem.monopoly && !gameState.isApproved) {
+            const scorePenalty = Math.floor(Math.random() * 21) + 30; // สุ่มหักคะแนน 30 - 50
+            const coinPenalty = Math.floor(Math.random() * 11) + 10;   // สุ่มหักเหรียญ 10 - 20
+
+            gameState.score = Math.max(0, gameState.score - scorePenalty);
+            gameState.coins = Math.max(0, gameState.coins - coinPenalty);
+
             playErrorSound();
-            showNotification("⚠️ สินค้าผูกขาดต้องนำไปประทับตราพระคลังก่อน!");
+            updateHUD();
+            showNotification(`⚠️ ลืมประทับตรา! โดนปรับคะแนน -${scorePenalty} และ -${coinPenalty} เหรียญ!`);
+
+            // รีเซ็ตสถานะตัวเลือกสินค้า
+            gameState.selectedItem = null;
+            gameState.isApproved = false;
+            document.querySelectorAll('.item-card').forEach(c => c.classList.remove('selected'));
+            document.getElementById('royal-seal-zone').classList.remove('approved');
+            document.getElementById('seal-text').innerText = "ลากมาประทับ";
             return;
         }
 
