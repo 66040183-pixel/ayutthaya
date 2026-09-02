@@ -154,7 +154,7 @@
             box-shadow: 0 0 20px #00ff00; transform: scale(1.05);
         }
 
-        /* Ship Section Container (Left Side) */
+        /* Ship Section Container (Left Side) - ขยับลงมาตรงกลางและชิดขอบ */
         #ship-container-left {
             position: absolute; 
             top: 25%; 
@@ -166,6 +166,7 @@
             gap: 4px;
         }
 
+        /* เรือใหญ่เด่นสะใจ */
         #ship-image {
             width: 480px; height: auto;
             filter: drop-shadow(0px 14px 22px rgba(0,0,0,0.9));
@@ -177,6 +178,7 @@
             50% { transform: translateY(-12px) rotate(1.5deg); }
         }
 
+        /* กล่องข้อความย่อเล็กลง กระชับ ไม่แย่งซีน */
         #single-ship-card {
             width: 210px; 
             background: var(--wood-panel);
@@ -199,7 +201,7 @@
         }
         .req-tag.fulfilled { background: #1b4d1b; border-color: #00ff00; text-decoration: line-through; opacity: 0.55; }
 
-        /* Inventory Tray */
+        /* Inventory Tray Positioned Center Bottom */
         .inventory-tray {
             position: absolute; bottom: 20px; left: 50%;
             transform: translateX(-50%);
@@ -350,7 +352,7 @@
         </div>
 
         <div id="ship-container-left">
-            <img id="ship-image" src="ro.png" alt="เรือสำเภา" onerror="this.style.display='none'" />
+            <img id="ship-image" src="ro.png" alt="เรือสำเภา" />
             
             <div id="single-ship-card" class="interactive">
                 <div class="ship-title" id="ship-title">🚢 กำลังรอเรือเทียบท่า...</div>
@@ -479,11 +481,6 @@
     };
 
     let cursorX = window.innerWidth / 2, cursorY = window.innerHeight / 2, isPinching = false;
-
-    function updateHUD() {
-        document.getElementById('score-display').innerText = `⭐ คะแนน: ${gameState.score}`;
-        document.getElementById('coin-display').innerText = `🪙 เหรียญเงิน: ${gameState.coins}`;
-    }
 
     /* SHOP FUNCTIONS */
     function buyTimeBoost() {
@@ -698,7 +695,7 @@
         document.getElementById('dragged-item-ghost').innerText = gameState.selectedItem.icon;
     }
 
-    /* Three.js Setup (ปรับปรุงให้ใช้รูป PNG 2D Graphics สำหรับหมวก) */
+    /* Three.js Setup */
     const canvasAR = document.getElementById('canvas-ar');
     const renderer = new THREE.WebGLRenderer({ canvas: canvasAR, alpha: true, antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -709,169 +706,138 @@
     const hatGroup = new THREE.Group();
     scene.add(hatGroup);
 
-    /* ตัวสร้าง Canvas Texture สำรอง กรณียังไม่มีไฟล์ PNG จริงอยู่บนเซิร์ฟเวอร์ */
-    function createFallbackHatTexture(color, label) {
-        const canvas = document.createElement('canvas');
-        canvas.width = 256; canvas.height = 256;
-        const ctx = canvas.getContext('2d');
-        ctx.fillStyle = color;
-        ctx.beginPath();
-        ctx.moveTo(128, 20); ctx.lineTo(230, 200); ctx.lineTo(26, 200);
-        ctx.closePath(); ctx.fill();
-        ctx.fillStyle = '#FFD700';
-        ctx.fillRect(40, 180, 176, 25);
-        ctx.font = 'bold 28px sans-serif';
-        ctx.fillStyle = '#ffffff';
-        ctx.textAlign = 'center';
-        ctx.fillText(label, 128, 140);
-        return new THREE.CanvasTexture(canvas);
-    }
-
-    const textureLoader = new THREE.TextureLoader();
-    const hatTextures = [
-        createFallbackHatTexture('#8B4513', 'ขุนนาง'),
-        createFallbackHatTexture('#DAA520', 'ลอมพอก'),
-        createFallbackHatTexture('#A30000', 'แม่ทัพ')
-    ];
-
-    /* พยายามโหลดรูป PNG ของคุณ (ถ้ามีไฟล์ hat1.png, hat2.png, hat3.png) */
-    ['hat1.png', 'hat2.png', 'hat3.png'].forEach((file, index) => {
-        textureLoader.load(file, (tex) => {
-            hatTextures[index] = tex;
-            if (gameState.currentHatIndex === index) createHatMesh(index);
-        }, undefined, () => {});
-    });
-
     function createHatMesh(type) {
         while(hatGroup.children.length > 0){ hatGroup.remove(hatGroup.children[0]); }
-        
-        const geometry = new THREE.PlaneGeometry(1.4, 1.4);
-        const material = new THREE.MeshBasicMaterial({
-            map: hatTextures[type],
-            transparent: true,
-            depthWrite: false
-        });
-        
-        const hatMesh = new THREE.Mesh(geometry, material);
-        hatMesh.position.set(0, 0.45, 0); // ตั้งค่าตำแหน่งความสูงบนศีรษะ
-        hatGroup.add(hatMesh);
+        if (type === 0) {
+            const hatCone = new THREE.Mesh(new THREE.ConeGeometry(0.45, 0.75, 16), new THREE.MeshStandardMaterial({ color: 0xaa0000, roughness: 0.3 }));
+            const hatRim = new THREE.Mesh(new THREE.TorusGeometry(0.48, 0.07, 12, 24), new THREE.MeshStandardMaterial({ color: 0xFFD700, metalness: 0.8 }));
+            hatRim.rotation.x = Math.PI / 2; hatRim.position.y = -0.35;
+            hatGroup.add(hatCone, hatRim);
+        } else if (type === 1) {
+            const baseCone = new THREE.Mesh(new THREE.ConeGeometry(0.35, 1.1, 16), new THREE.MeshStandardMaterial({ color: 0xFFD700, metalness: 0.7, roughness: 0.2 }));
+            const ring1 = new THREE.Mesh(new THREE.TorusGeometry(0.38, 0.05, 12, 24), new THREE.MeshStandardMaterial({ color: 0x8B0000 }));
+            ring1.rotation.x = Math.PI / 2; ring1.position.y = -0.3;
+            const topOrb = new THREE.Mesh(new THREE.SphereGeometry(0.08, 12, 12), new THREE.MeshStandardMaterial({ color: 0xFFD700, metalness: 0.9 }));
+            topOrb.position.y = 0.58;
+            hatGroup.add(baseCone, ring1, topOrb);
+        } else if (type === 2) {
+            const dome = new THREE.Mesh(new THREE.SphereGeometry(0.42, 16, 16, 0, Math.PI * 2, 0, Math.PI / 2), new THREE.MeshStandardMaterial({ color: 0x1a365d, metalness: 0.5 }));
+            const rim = new THREE.Mesh(new THREE.TorusGeometry(0.43, 0.06, 12, 24), new THREE.MeshStandardMaterial({ color: 0xFFD700, metalness: 0.8 }));
+            rim.rotation.x = Math.PI / 2;
+            const spike = new THREE.Mesh(new THREE.ConeGeometry(0.08, 0.4, 8), new THREE.MeshStandardMaterial({ color: 0xFFD700, metalness: 0.9 }));
+            spike.position.y = 0.35;
+            hatGroup.add(dome, rim, spike);
+        }
     }
+    createHatMesh(0);
 
     function changeHat(index) {
         gameState.currentHatIndex = index;
-        document.querySelectorAll('.hat-option').forEach((el, idx) => {
-            el.classList.toggle('active', idx === index);
-        });
         createHatMesh(index);
-        playCorrectSound();
+        document.querySelectorAll('.hat-option').forEach((opt, idx) => opt.classList.toggle('active', idx === index));
         showNotification("🎩 เปลี่ยนสไตล์หมวกขุนนางแล้ว!");
     }
 
-    createHatMesh(0);
-
-    /* MediaPipe Tracking & Hand Gesture Interaction */
+    /* Face Tracking */
     const videoElement = document.getElementById('webcam');
-    
     const faceMesh = new FaceMesh({ locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}` });
-    faceMesh.setOptions({ maxNumFaces: 1, refineLandmarks: true, minDetectionConfidence: 0.5, minTrackingConfidence: 0.5 });
-    
-    faceMesh.onResults(results => {
+    faceMesh.setOptions({ maxNumFaces: 1, refineLandmarks: true });
+    faceMesh.onResults((results) => {
         if (results.multiFaceLandmarks && results.multiFaceLandmarks.length > 0) {
-            const landmarks = results.multiFaceLandmarks[0];
-            const topHead = landmarks[10];
-            
-            // แปลงพิกัด 2D Screen -> 3D World Space
-            const x = (1 - topHead.x) * 2 - 1;
-            const y = -(topHead.y * 2 - 1);
-            
-            const vector = new THREE.Vector3(x, y, 0.5);
-            vector.unproject(camera);
-            const dir = vector.sub(camera.position).normalize();
-            const distance = -camera.position.z / dir.z;
-            const pos = camera.position.clone().add(dir.multiplyScalar(distance));
-            
-            hatGroup.position.set(pos.x, pos.y + 0.35, 0);
+            const topHead = results.multiFaceLandmarks[0][10];
+            hatGroup.position.set((0.5 - topHead.x) * 4.5, (0.5 - topHead.y) * 3.2 + 0.65, 1.5);
         }
     });
 
+    /* Hand Tracking */
     const hands = new Hands({ locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}` });
-    hands.setOptions({ maxNumHands: 1, modelComplexity: 1, minDetectionConfidence: 0.5, minTrackingConfidence: 0.5 });
-    
-    hands.onResults(results => {
+    hands.setOptions({ maxNumHands: 1, modelComplexity: 1, minDetectionConfidence: 0.6 });
+    hands.onResults((results) => {
         const cursorEl = document.getElementById('hand-cursor');
-        const ghostEl = document.getElementById('dragged-item-ghost');
-
         if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
             const hand = results.multiHandLandmarks[0];
-            const indexTip = hand[8];
-            const thumbTip = hand[4];
+            const indexFinger = hand[8]; const thumb = hand[4];
+            const targetX = (1 - indexFinger.x) * window.innerWidth;
+            const targetY = indexFinger.y * window.innerHeight;
 
-            cursorX = (1 - indexTip.x) * window.innerWidth;
-            cursorY = indexTip.y * window.innerHeight;
+            cursorX += (targetX - cursorX) * 0.35;
+            cursorY += (targetY - cursorY) * 0.35;
+            cursorEl.style.left = `${cursorX}px`; cursorEl.style.top = `${cursorY}px`;
+            cursorEl.style.display = 'block';
 
-            cursorEl.style.left = `${cursorX}px`;
-            cursorEl.style.top = `${cursorY}px`;
-
-            const distance = Math.hypot(indexTip.x - thumbTip.x, indexTip.y - thumbTip.y);
-            isPinching = distance < 0.075;
+            const dist = Math.hypot(thumb.x - indexFinger.x, thumb.y - indexFinger.y);
+            const prevPinch = isPinching;
+            isPinching = dist < 0.05;
 
             if (isPinching) {
                 cursorEl.classList.add('pinching');
-                if (gameState.selectedItem) {
-                    ghostEl.style.display = 'block';
-                    ghostEl.style.left = `${cursorX}px`;
-                    ghostEl.style.top = `${cursorY}px`;
-                } else {
-                    const hoveredCard = document.elementFromPoint(cursorX, cursorY)?.closest('.item-card');
-                    if (hoveredCard) selectItem(hoveredCard.dataset.id);
-                }
+                if (!prevPinch) onPinchStart(cursorX, cursorY);
+                onPinchMove(cursorX, cursorY);
             } else {
                 cursorEl.classList.remove('pinching');
-                if (gameState.selectedItem) {
-                    handleDrop(cursorX, cursorY);
-                    gameState.selectedItem = null;
-                    ghostEl.style.display = 'none';
-                    document.querySelectorAll('.item-card').forEach(c => c.classList.remove('selected'));
+                if (prevPinch) onPinchEnd(cursorX, cursorY);
+            }
+        } else { cursorEl.style.display = 'none'; }
+    });
+
+    function onPinchStart(x, y) {
+        document.querySelectorAll('.item-card').forEach(card => {
+            const rect = card.getBoundingClientRect();
+            if (x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) {
+                selectItem(card.dataset.id);
+            }
+        });
+    }
+
+    function onPinchMove(x, y) {
+        if (gameState.selectedItem) {
+            const ghostEl = document.getElementById('dragged-item-ghost');
+            ghostEl.style.display = 'block';
+            ghostEl.style.left = `${x}px`; ghostEl.style.top = `${y}px`;
+
+            const sealRect = document.getElementById('royal-seal-zone').getBoundingClientRect();
+            if (x >= sealRect.left && x <= sealRect.right && y >= sealRect.top && y <= sealRect.bottom) {
+                if (gameState.selectedItem.monopoly && !gameState.isApproved) {
+                    gameState.isApproved = true;
+                    playCorrectSound();
+                    document.getElementById('royal-seal-zone').classList.add('approved');
+                    document.getElementById('seal-text').innerText = "ประทับแล้ว!";
                 }
             }
         }
-    });
+    }
 
-    function handleDrop(x, y) {
-        const sealRect = document.getElementById('royal-seal-zone').getBoundingClientRect();
-        const shipRect = document.getElementById('ship-container-left').getBoundingClientRect();
-
-        // ลากสินค้าผูกขาดไปประทับตราพระคลัง
-        if (x >= sealRect.left && x <= sealRect.right && y >= sealRect.top && y <= sealRect.bottom) {
-            if (gameState.selectedItem.monopoly) {
-                gameState.isApproved = true;
-                document.getElementById('royal-seal-zone').classList.add('approved');
-                document.getElementById('seal-text').innerText = "อนุมัติแล้ว!";
-                playCorrectSound();
-                showNotification(`📜 ประทับตราพระคลังอนุมัติ "${gameState.selectedItem.name}" แล้ว!`);
+    function onPinchEnd(x, y) {
+        const ghostEl = document.getElementById('dragged-item-ghost');
+        ghostEl.style.display = 'none';
+        if (gameState.selectedItem && gameState.currentShip) {
+            const shipRect = document.getElementById('ship-container-left').getBoundingClientRect();
+            if (x >= shipRect.left && x <= shipRect.right && y >= shipRect.top && y <= shipRect.bottom) {
+                checkDelivery();
             }
-            return;
         }
+    }
 
-        // ลากสินค้าไปส่งให้เรือสำเภา
-        if (x >= shipRect.left && x <= shipRect.right && y >= shipRect.top && y <= shipRect.bottom) {
-            if (!gameState.currentShip) return;
+    function checkDelivery() {
+        if (!gameState.selectedItem || !gameState.currentShip) return;
 
-            if (gameState.selectedItem.monopoly && !gameState.isApproved) {
+        const targetReq = gameState.currentShip.reqItems.find(
+            req => req.item.id === gameState.selectedItem.id && !req.fulfilled
+        );
+
+        if (targetReq) {
+            if (gameState.selectedItem.monopoly && !gameState.isApproved && !gameState.autoApproveActive) {
                 playErrorSound();
-                showNotification(`⚠️ "${gameState.selectedItem.name}" เป็นสินค้าผูกขาด ต้องนำไปประทับตราพระคลังก่อน!`);
-                return;
-            }
-
-            const targetReq = gameState.currentShip.reqItems.find(r => r.item.id === gameState.selectedItem.id && !r.fulfilled);
-            if (targetReq) {
+                showNotification(`⚠️ สินค้าผูกขาด! ต้องลากไปประทับ "ตราพระคลัง" ก่อนส่ง!`);
+                gameState.score = Math.max(0, gameState.score - 50);
+            } else {
                 targetReq.fulfilled = true;
+                playCorrectSound();
                 gameState.score += gameState.selectedItem.value;
                 gameState.coins += Math.floor(gameState.selectedItem.value / 10);
-                playCorrectSound();
+
                 updateHUD();
                 updateShipUI();
-                showNotification(`✅ ส่งมอบ "${gameState.selectedItem.name}" สำเร็จ! (+${gameState.selectedItem.value} คะแนน)`);
 
                 const allFulfilled = gameState.currentShip.reqItems.every(r => r.fulfilled);
                 if (allFulfilled) {
@@ -881,13 +847,27 @@
                     showNotification(`🎉 สำเร็จ! ได้รับ "${reward.name}" จาก ${country}!`);
                     triggerCooldown();
                 }
-            } else {
-                playErrorSound();
-                showNotification(`❌ เรือลำนี้ไม่ต้องการ "${gameState.selectedItem.name}"`);
             }
+        } else {
+            playErrorSound();
+            showNotification(`❌ เรือลำนี้ไม่ต้องการ ${gameState.selectedItem.name}!`);
+        }
+
+        gameState.selectedItem = null;
+        gameState.isApproved = false;
+        document.querySelectorAll('.item-card').forEach(c => c.classList.remove('selected'));
+        if (!gameState.autoApproveActive) {
+            document.getElementById('royal-seal-zone').classList.remove('approved');
+            document.getElementById('seal-text').innerText = "ลากมาประทับ";
         }
     }
 
+    function updateHUD() {
+        document.getElementById('score-display').innerText = `⭐ คะแนน: ${gameState.score}`;
+        document.getElementById('coin-display').innerText = `🪙 เหรียญเงิน: ${gameState.coins}`;
+    }
+
+    /* Start Camera */
     const cameraUtils = new Camera(videoElement, {
         onFrame: async () => {
             await faceMesh.send({ image: videoElement });
@@ -904,9 +884,9 @@
     animate();
 
     window.addEventListener('resize', () => {
+        renderer.setSize(window.innerWidth, window.innerHeight);
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
     });
 </script>
 </body>
