@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>เจ้าท่าจำลอง: ท่าเรือสำเภาอยุธยา</title>
     
     <!-- External Libraries -->
@@ -23,105 +23,105 @@
         * {
             box-sizing: border-box;
             user-select: none;
-            -webkit-user-select: none;
             margin: 0; padding: 0;
             font-family: 'Mitr', 'Sarabun', sans-serif;
-            touch-action: manipulation;
         }
 
         body, html {
             width: 100%; height: 100%;
             overflow: hidden; background-color: #000; color: #fff;
-            position: fixed;
         }
 
-        #game-container { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+        #game-container { position: relative; width: 100vw; height: 100vh; }
         #webcam { position: absolute; width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); z-index: 1; }
 
         #ui-layer {
             position: absolute; width: 100%; height: 100%;
             z-index: 3; display: flex; flex-direction: column;
-            justify-content: space-between; padding: 12px; pointer-events: none;
+            justify-content: space-between; padding: 15px; pointer-events: none;
         }
 
         .interactive { pointer-events: auto; }
 
-        /* Top HUD Bar */
+        /* Top HUD */
         .hud-bar {
             display: flex; 
             justify-content: center;
             align-items: center;
             width: 100%;
-            gap: 12px;
-            flex-wrap: wrap;
-            z-index: 10;
+            gap: 16px;
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            padding: 0;
         }
 
         .hud-item { 
-            font-size: clamp(0.85rem, 2vw, 1.1rem); 
+            font-size: 1.1rem; 
             font-weight: 600; 
             color: var(--gold); 
             text-shadow: 2px 2px 4px #000; 
             display: flex; 
             align-items: center; 
-            gap: 6px;
+            gap: 8px;
             background: var(--wood-panel);
-            border: 2px solid var(--gold);
-            border-radius: 14px;
-            padding: 6px 14px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+            border: 2.5px solid var(--gold);
+            border-radius: 16px;
+            padding: 8px 18px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.6), inset 0 0 8px rgba(255, 215, 0, 0.2);
+            transition: transform 0.2s ease;
         }
 
         #journal-btn {
             background: linear-gradient(180deg, #FFD700 0%, #FFA500 100%);
             color: var(--dark-wood); 
-            border: 2px solid #fff;
-            padding: 6px 16px; 
-            border-radius: 14px; 
+            border: 2.5px solid #fff;
+            padding: 8px 20px; 
+            border-radius: 16px; 
             font-weight: bold; 
             cursor: pointer;
-            font-size: clamp(0.85rem, 1.8vw, 1rem); 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-            transition: transform 0.15s;
+            font-size: 1rem; 
+            box-shadow: 0 6px 15px rgba(0,0,0,0.5);
+            transition: transform 0.15s, filter 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
-        #journal-btn:active { transform: scale(0.95); }
+        #journal-btn:hover { transform: scale(1.06) translateY(-2px); filter: brightness(1.1); }
 
         /* Royal Shop Panel */
         #royal-shop {
             position: absolute;
-            top: 75px;
-            right: 12px;
+            top: 200px;
+            right: 20px;
             background: var(--wood-panel);
-            border: 2.5px solid var(--gold);
-            border-radius: 14px; padding: 8px;
+            border: 3px solid var(--gold);
+            border-radius: 16px; padding: 8px;
             display: flex; flex-direction: column;
-            gap: 6px; align-items: center; z-index: 6;
+            gap: 8px; align-items: center; z-index: 5;
             box-shadow: 0 4px 15px rgba(0,0,0,0.6);
-            width: clamp(120px, 15vw, 150px);
+            width: 140px;
         }
 
         .shop-btn {
-            width: 100%; background: #3a2218; border: 1.5px solid var(--gold);
-            border-radius: 8px; color: #fff; padding: 5px 4px; font-size: clamp(0.65rem, 1.2vw, 0.75rem);
+            width: 100%; background: #3a2218; border: 2px solid var(--gold);
+            border-radius: 10px; color: #fff; padding: 6px 4px; font-size: 0.75rem;
             cursor: pointer; display: flex; flex-direction: column; align-items: center;
             transition: all 0.2s;
         }
-        .shop-btn:active { transform: scale(0.95); }
-        .shop-cost { color: var(--bright-gold); font-weight: bold; font-size: clamp(0.6rem, 1.1vw, 0.7rem); }
+        .shop-btn:hover { background: #5c3a28; transform: translateY(-2px); }
+        .shop-btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #555; }
+        .shop-cost { color: var(--bright-gold); font-weight: bold; font-size: 0.7rem; }
 
         /* Royal Seal Zone */
         #royal-seal-zone {
-            position: absolute; 
-            top: 75px; 
-            left: 12px;
-            width: clamp(85px, 12vw, 110px); 
-            height: clamp(85px, 12vw, 110px);
+            position: absolute; top: 80px; right: 20px;
+            width: 95px; height: 95px;
             border: 3px dashed var(--gold); background: rgba(139, 0, 0, 0.85);
             border-radius: 50%; display: flex; flex-direction: column;
             justify-content: center; align-items: center; text-align: center;
-            font-size: clamp(0.65rem, 1.2vw, 0.8rem); color: #fff; font-weight: bold;
+            font-size: 0.75rem; color: #fff; font-weight: bold;
             box-shadow: 0 0 12px rgba(0,0,0,0.6); transition: all 0.3s;
-            z-index: 6;
         }
 
         #royal-seal-zone.approved {
@@ -129,91 +129,82 @@
             box-shadow: 0 0 20px #00ff00; transform: scale(1.05);
         }
 
-        /* Ship Section Container (ขยายใหญ่ขึ้น) */
+        /* Ship Section Container (Left Side) */
         #ship-container-left {
             position: absolute; 
-            top: 22%; 
-            left: 50%;
-            transform: translateX(-50%);
-            width: clamp(320px, 60vw, 680px); 
+            top: 25%; 
+            left: 10px;
+            width: 500px; 
             display: flex; 
             flex-direction: column;
             align-items: center; 
-            gap: 8px;
-            z-index: 4;
+            gap: 4px;
         }
 
         #ship-image {
-            width: 100%; height: auto;
-            max-height: 40vh;
-            object-fit: contain;
+            width: 480px; height: auto;
             filter: drop-shadow(0px 14px 22px rgba(0,0,0,0.9));
             animation: floatShip 3.5s ease-in-out infinite;
         }
 
         @keyframes floatShip {
             0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-10px) rotate(1.2deg); }
+            50% { transform: translateY(-12px) rotate(1.5deg); }
         }
 
-        /* กล่องข้อความสั่งสินค้าเรือ (ขยายใหญ่ขึ้น) */
         #single-ship-card {
-            width: clamp(280px, 80%, 420px); 
+            width: 210px; 
             background: var(--wood-panel);
-            border: 2.5px solid var(--gold); 
-            border-radius: 14px;
-            padding: 8px 12px; 
+            border: 1.5px solid var(--gold); 
+            border-radius: 10px;
+            padding: 5px 8px; 
             text-align: center;
-            box-shadow: 0 6px 18px rgba(0,0,0,0.85);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.8);
         }
 
-        .ship-title { font-size: clamp(0.95rem, 2vw, 1.2rem); font-weight: bold; color: var(--gold); }
-        .ship-timer { font-size: clamp(0.85rem, 1.6vw, 1rem); color: #ff6b6b; font-weight: bold; margin: 2px 0; }
+        .ship-title { font-size: 0.85rem; font-weight: bold; color: var(--gold); }
+        .ship-timer { font-size: 0.75rem; color: #ff6b6b; font-weight: bold; margin: 1px 0; }
         
-        .req-list { display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+        .req-list { display: flex; justify-content: center; gap: 4px; flex-wrap: wrap; margin-top: 2px; }
 
         .req-tag {
-            background: #3a2218; border: 1.5px solid var(--gold);
-            padding: 3px 8px; border-radius: 8px; font-size: clamp(0.75rem, 1.4vw, 0.9rem); color: var(--cream);
-            display: flex; align-items: center; gap: 4px; font-weight: 600;
+            background: #3a2218; border: 1px solid var(--gold);
+            padding: 1px 5px; border-radius: 5px; font-size: 0.65rem; color: var(--cream);
+            display: flex; align-items: center; gap: 4px;
         }
         .req-tag.fulfilled { background: #1b4d1b; border-color: #00ff00; text-decoration: line-through; opacity: 0.55; }
 
         /* Inventory Tray Positioned Center Bottom */
         .inventory-tray {
-            position: absolute; bottom: 12px; left: 50%;
+            position: absolute; bottom: 20px; left: 50%;
             transform: translateX(-50%);
-            display: flex; gap: 8px; width: calc(100% - 24px); max-width: 1000px;
-            background: var(--wood-panel); border: 2.5px solid var(--gold);
-            border-radius: 16px; padding: 8px; overflow-x: auto;
+            display: flex; gap: 8px; max-width: 90vw;
+            background: var(--wood-panel); border: 3px solid var(--gold);
+            border-radius: 18px; padding: 10px; overflow-x: auto;
             box-shadow: 0 8px 25px rgba(0,0,0,0.7);
-            touch-action: pan-x;
-            z-index: 5;
         }
 
         .item-card {
-            min-width: clamp(65px, 12vw, 85px); 
-            height: clamp(75px, 14vw, 95px); 
-            background: #3a2218;
+            min-width: 65px; height: 78px; background: #3a2218;
             border: 2px solid #5c3a28; border-radius: 12px;
             display: flex; flex-direction: column; align-items: center;
-            justify-content: center; font-size: clamp(0.65rem, 1.2vw, 0.8rem); text-align: center;
-            position: relative; cursor: pointer; flex-shrink: 0; transition: all 0.15s;
+            justify-content: center; font-size: 0.75rem; text-align: center;
+            position: relative; cursor: pointer; flex-shrink: 0; transition: all 0.2s;
         }
 
+        .item-card:hover { transform: translateY(-4px); border-color: var(--bright-gold); }
         .item-card.selected { border: 3px solid var(--gold); background: #5c3a28; box-shadow: 0 0 12px var(--gold); }
         .item-card.monopoly::after {
             content: "ตราคลัง"; position: absolute; top: 2px; right: 2px;
-            background: var(--crimson); color: #fff; font-size: 0.55rem; padding: 1px 3px; border-radius: 4px; font-weight: bold;
+            background: var(--crimson); color: #fff; font-size: 0.5rem; padding: 1px 4px; border-radius: 4px; font-weight: bold;
         }
         
-        /* สไตล์สำหรับรูปภาพสินค้าแถบล่าง */
+        /* สไตล์สำหรับรูปภาพสินค้า */
         .item-icon-img {
-            width: clamp(32px, 6vw, 46px);
-            height: clamp(32px, 6vw, 46px);
+            width: 38px;
+            height: 38px;
             object-fit: contain;
             margin-bottom: 2px;
-            pointer-events: none;
         }
 
         /* Cursor & Notification */
@@ -225,66 +216,57 @@
         }
         #hand-cursor.pinching { width: 16px; height: 16px; background: #ff3333; border-color: var(--gold); }
 
-        /* ปรับรูปสินค้าขณะลากด้วยมือให้ใหญ่สะใจ */
         #dragged-item-ghost {
             position: absolute; pointer-events: none;
             z-index: 100; transform: translate(-50%, -50%); display: none;
-            filter: drop-shadow(0 6px 14px rgba(0,0,0,0.8));
-        }
-        #dragged-item-ghost img {
-            width: clamp(75px, 15vw, 100px) !important;
-            height: clamp(75px, 15vw, 100px) !important;
-            object-fit: contain;
-            filter: drop-shadow(0 0 10px var(--bright-gold));
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
         }
 
         #notification-box {
-            position: absolute; top: 75px; left: 50%; transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.92); border: 2.5px solid var(--gold);
-            padding: 8px 20px; border-radius: 20px; color: #fff;
-            font-size: clamp(0.85rem, 1.8vw, 1.1rem); text-align: center; display: none; z-index: 15;
+            position: absolute; top: 85px; left: 50%; transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.9); border: 3px solid var(--gold);
+            padding: 10px 24px; border-radius: 25px; color: #fff;
+            font-size: 1.1rem; text-align: center; display: none; z-index: 10;
             box-shadow: 0 6px 20px rgba(0,0,0,0.6);
-            width: max-content; max-width: 90vw;
         }
 
         /* Overlay & Modals */
         .overlay-screen {
             position: absolute; width: 100%; height: 100%;
-            background: rgba(15, 8, 4, 0.94); z-index: 30;
+            background: rgba(15, 8, 4, 0.92); z-index: 20;
             display: flex; flex-direction: column; justify-content: center;
-            align-items: center; text-align: center; padding: 15px;
+            align-items: center; text-align: center; padding: 20px;
         }
 
         .panel {
-            background: var(--dark-wood); border: 3px solid var(--gold);
-            border-radius: 20px; padding: 20px; max-width: 550px; width: 95%;
+            background: var(--dark-wood); border: 4px solid var(--gold);
+            border-radius: 24px; padding: 30px; max-width: 580px; width: 92%;
             box-shadow: 0 10px 30px rgba(0,0,0,0.9), inset 0 0 15px rgba(255, 215, 0, 0.2);
-            max-height: 90vh; overflow-y: auto;
         }
 
         .collection-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px; margin: 15px 0;
-            max-height: 50vh; overflow-y: auto; padding: 5px;
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 15px 0;
+            max-height: 260px; overflow-y: auto; padding: 5px;
         }
 
         .collection-card {
-            background: #3a2218; border: 1.5px solid var(--gold); border-radius: 10px;
-            padding: 8px; font-size: 0.75rem; text-align: center;
+            background: #3a2218; border: 1.5px solid var(--gold); border-radius: 12px;
+            padding: 10px; font-size: 0.8rem; text-align: center;
         }
         .collection-card.locked { opacity: 0.3; filter: grayscale(1); }
 
-        h1 { color: var(--gold); margin-bottom: 10px; font-size: clamp(1.4rem, 3.5vw, 2.1rem); text-shadow: 2px 2px 4px #000; }
-        p { margin-bottom: 12px; font-size: clamp(0.85rem, 1.8vw, 1rem); color: var(--cream); line-height: 1.4; }
+        h1 { color: var(--gold); margin-bottom: 12px; font-size: 2.1rem; text-shadow: 2px 2px 4px #000; }
+        p { margin-bottom: 14px; font-size: 1rem; color: var(--cream); line-height: 1.5; }
 
-        .btn-group { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 12px; }
+        .btn-group { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 15px; }
 
         .btn {
             background: linear-gradient(180deg, #A30000 0%, #660000 100%);
             color: var(--gold); border: 2px solid var(--gold);
-            padding: 10px 22px; font-size: clamp(0.9rem, 2vw, 1.1rem); font-weight: bold; border-radius: 12px;
-            cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.4); transition: all 0.2s;
+            padding: 12px 28px; font-size: 1.1rem; font-weight: bold; border-radius: 14px;
+            cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.4); transition: all 0.2s;
         }
-        .btn:active { transform: scale(0.95); }
+        .btn:hover { transform: translateY(-2px); filter: brightness(1.2); }
         .btn-secondary {
             background: linear-gradient(180deg, #3a2218 0%, #20120c 100%);
             color: var(--cream); border-color: #8c5a3c;
@@ -293,11 +275,11 @@
         .hidden { display: none !important; }
 
         .guide-box {
-            text-align: left; background: rgba(0,0,0,0.4); border-radius: 12px;
-            padding: 12px; margin: 10px 0; border: 1px solid #5c3a28;
-            max-height: 45vh; overflow-y: auto;
+            text-align: left; background: rgba(0,0,0,0.4); border-radius: 14px;
+            padding: 15px; margin: 10px 0; border: 1px solid #5c3a28;
+            max-height: 250px; overflow-y: auto;
         }
-        .guide-box li { margin-left: 18px; margin-bottom: 6px; font-size: clamp(0.8rem, 1.6vw, 0.95rem); }
+        .guide-box li { margin-left: 20px; margin-bottom: 8px; font-size: 0.95rem; }
     </style>
 </head>
 <body>
@@ -311,7 +293,7 @@
 
     <!-- Royal Shop Panel -->
     <div id="royal-shop" class="interactive">
-        <div style="font-size: clamp(0.7rem, 1.2vw, 0.85rem); color: var(--gold); font-weight: bold; text-align: center;">🛒 คลังหลวง</div>
+        <div class="wardrobe-title" style="font-size: 0.8rem; color: var(--gold); font-weight: bold; text-align: center;">🛒 ร้านค้าคลังหลวง</div>
         <button class="shop-btn" onclick="buyTimeBoost()">
             <span>⏳ เพิ่มเวลา 30s</span>
             <span class="shop-cost">🪙 50 เหรียญ</span>
@@ -329,8 +311,8 @@
     <div id="ui-layer">
         <div class="hud-bar interactive">
             <div class="hud-item" id="score-display">⭐ คะแนน: 0</div>
-            <div class="hud-item" id="coin-display">🪙 เหรียญ: 40</div>
-            <button id="journal-btn" onclick="toggleJournal(true)">📖 สมุดบันทึก</button>
+            <div class="hud-item" id="coin-display">🪙 เหรียญเงิน: 40</div>
+            <button id="journal-btn" onclick="toggleJournal(true)">📖 สมุดบันทึกสำเภา</button>
             <div class="hud-item" id="timer-display">⏳ เวลา: 03:00</div>
         </div>
 
@@ -340,13 +322,13 @@
             <span id="seal-text">ลากมาประทับ</span>
         </div>
 
-        <div id="ship-container-left" class="interactive">
+        <div id="ship-container-left">
             <img id="ship-image" src="ro.png" alt="เรือสำเภา" />
             
-            <div id="single-ship-card">
+            <div id="single-ship-card" class="interactive">
                 <div class="ship-title" id="ship-title">🚢 กำลังรอเรือเทียบท่า...</div>
                 <div class="ship-timer" id="ship-timer">เวลาเรือ: -- วินาที</div>
-                <div style="font-size: 0.75rem; color: var(--cream); margin-top:2px; font-weight:bold;">สินค้าที่เรือต้องการ:</div>
+                <div style="font-size: 0.65rem; color: var(--cream); margin-top:1px;">ต้องการ:</div>
                 <div class="req-list" id="req-list"></div>
             </div>
         </div>
@@ -373,9 +355,9 @@
             <h1>📖 วิธีการเล่นและกฎกติกา</h1>
             <div class="guide-box">
                 <ul>
-                    <li>🪙 <b>การควบคุม:</b> ใช้มือผ่านกล้อง (จีบนิ้ว) หรือใช้ **นิ้วแตะ/เม้าส์ลาก** สินค้าบนหน้าจอได้ทันที!</li>
-                    <li>📜 <b>สินค้าผูกขาด (ตราคลัง):</b> สินค้าที่มีสัญลักษณ์ ต้องลากไปประทับ **"ตราพระคลัง"** (ซ้ายบน) ก่อนส่งเรือ <span style="color: #ff6b6b;">(หากลืมจะโดนหักคะแนนและเหรียญ!)</span></li>
-                    <li>🛒 <b>ร้านค้าคลังหลวง:</b> ใช้เหรียญซื้อเวลาเพิ่ม, อนุมัติอัตโนมัติ หรือส่งด่วน</li>
+                    <li>🪙 <b>ร้านค้าคลังหลวง:</b> สะสมเหรียญเงินเพื่อใช้ซื้อเวลาเพิ่ม, อนุมัติสินค้าอัตโนมัติ หรือส่งสินค้าด่วน!</li>
+                    <li>👌 <b>ควบคุมด้วยมือ:</b> จีบนิ้ว (Thumb & Index Pinch) เพื่อจับสินค้าลากไปส่งให้เรือสำเภาทางซ้าย</li>
+                    <li>📜 <b>สินค้าผูกขาด (ตราคลัง):</b> สินค้าที่มีสัญลักษณ์ต้องลากไปประทับ **"ตราพระคลัง"** (ขวาบน) ก่อนส่งเรือ <span style="color: #ff6b6b;">(หากลืมประทับตราแล้วส่ง จะถูกหัก 30-50 คะแนน และ 10-20 เหรียญ!)</span></li>
                     <li>🎁 <b>ของรางวัล:</b> ส่งสินค้าครบถ้วน ได้รับของสะสมบันทึกลงใน **สมุดบันทึกสำเภา**!</li>
                 </ul>
             </div>
@@ -424,7 +406,7 @@
         osc.connect(gain); gain.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime + 0.25);
     }
 
-    // อัปเดตรายการสินค้า (แก้ไขชื่อเป็น ก้อนแร่เหล็ก เรียบร้อยแล้ว)
+    // กำหนดไฟล์รูปภาพสินค้าแต่ละชนิด
     const ITEMS = {
         rice: { id: 'rice', name: 'ข้าวสาร', monopoly: false, value: 100, icon: 'rice.png' },
         pepper: { id: 'pepper', name: 'พริกไทย', monopoly: false, value: 120, icon: 'pepper.png' },
@@ -435,7 +417,7 @@
         tin: { id: 'tin', name: 'ดีบุก', monopoly: true, value: 250, icon: 'tin.png' },
         ivory: { id: 'ivory', name: 'งาช้าง', monopoly: true, value: 300, icon: 'ivory.png' },
         gun: { id: 'gun', name: 'อาวุธปืน', monopoly: true, value: 350, icon: 'gun.png' },
-        iron: { id: 'iron', name: 'ก้อนแร่เหล็ก', monopoly: true, value: 280, icon: 'iron.png' },
+        iron: { id: 'iron', name: 'แร่อกไก่', monopoly: true, value: 280, icon: 'iron.png' },
         hide: { id: 'hide', name: 'หนังสัตว์', monopoly: true, value: 220, icon: 'hide.png' }
     };
 
@@ -470,35 +452,41 @@
     };
 
     let cursorX = window.innerWidth / 2, cursorY = window.innerHeight / 2, isPinching = false;
-    let isTouchDragging = false;
 
     function updateHUD() {
         document.getElementById('score-display').innerText = `⭐ คะแนน: ${gameState.score}`;
-        document.getElementById('coin-display').innerText = `🪙 เหรียญ: ${gameState.coins}`;
+        document.getElementById('coin-display').innerText = `🪙 เหรียญเงิน: ${gameState.coins}`;
     }
 
     /* SHOP FUNCTIONS */
     function buyTimeBoost() {
         if (gameState.coins >= 50 && gameState.isPlaying) {
-            gameState.coins -= 50; gameState.gameTimer += 30;
-            updateHUD(); playCorrectSound();
+            gameState.coins -= 50;
+            gameState.gameTimer += 30;
+            updateHUD();
+            playCorrectSound();
             showNotification("⏳ เพิ่มเวลาเล่นเกม +30 วินาทีสำเร็จ!");
         } else {
-            playErrorSound(); showNotification("🪙 เหรียญเงินไม่พอ (ต้องการ 50 เหรียญ)");
+            playErrorSound();
+            showNotification("🪙 เหรียญเงินไม่พอ (ต้องการ 50 เหรียญ)");
         }
     }
 
     function buyAutoApprove() {
         if (gameState.coins >= 40 && gameState.isPlaying) {
-            gameState.coins -= 40; gameState.autoApproveActive = true;
-            updateHUD(); playCorrectSound();
-            showNotification("📜 อนุมัติสินค้าอัตโนมัติ 15 วินาที!");
+            gameState.coins -= 40;
+            gameState.autoApproveActive = true;
+            updateHUD();
+            playCorrectSound();
+            showNotification("📜 เปิดใช้งานอนุมัติสินค้าอัตโนมัติ 15 วินาที!");
+
             setTimeout(() => {
                 gameState.autoApproveActive = false;
                 showNotification("📜 หมดเวลาอนุมัติสินค้าอัตโนมัติ");
             }, 15000);
         } else {
-            playErrorSound(); showNotification("🪙 เหรียญเงินไม่พอ (ต้องการ 40 เหรียญ)");
+            playErrorSound();
+            showNotification("🪙 เหรียญเงินไม่พอ (ต้องการ 40 เหรียญ)");
         }
     }
 
@@ -506,23 +494,30 @@
         if (gameState.coins >= 60 && gameState.isPlaying && gameState.currentShip) {
             const targetReq = gameState.currentShip.reqItems.find(r => !r.fulfilled);
             if (targetReq) {
-                gameState.coins -= 60; targetReq.fulfilled = true;
+                gameState.coins -= 60;
+                targetReq.fulfilled = true;
                 gameState.score += targetReq.item.value;
-                playCorrectSound(); updateHUD(); updateShipUI();
+                playCorrectSound();
+                updateHUD();
+                updateShipUI();
                 showNotification(`⚡ จัดส่ง ${targetReq.item.name} อัตโนมัติสำเร็จ!`);
 
-                if (gameState.currentShip.reqItems.every(r => r.fulfilled)) {
+                const allFulfilled = gameState.currentShip.reqItems.every(r => r.fulfilled);
+                if (allFulfilled) {
                     const country = gameState.currentShip.country;
                     gameState.collections[country] = (gameState.collections[country] || 0) + 1;
-                    showNotification(`🎉 สำเร็จ! ได้รับของสะสมจาก ${country}!`);
+                    const reward = REWARDS[country];
+                    showNotification(`🎉 สำเร็จ! ได้รับ "${reward.name}" จาก ${country}!`);
                     triggerCooldown();
                 }
             }
         } else {
-            playErrorSound(); showNotification("🪙 เหรียญเงินไม่พอ หรือไม่มีเรือเทียบท่า");
+            playErrorSound();
+            showNotification("🪙 เหรียญเงินไม่พอ หรือไม่มีเรือเทียบท่า");
         }
     }
 
+    // ฟังก์ชันสร้างรายการสินค้าแถบด้านล่างโดยใช้รูปภาพ
     function renderInventory() {
         const tray = document.getElementById('inventory-tray');
         tray.innerHTML = '';
@@ -530,11 +525,7 @@
             const card = document.createElement('div');
             card.className = `item-card ${item.monopoly ? 'monopoly' : ''}`;
             card.dataset.id = item.id;
-            
-            // เพิ่ม Touch Event สำหรับหน้าจอมือถือ/แท็บเล็ต
-            card.addEventListener('touchstart', (e) => handleTouchStartItem(e, item.id), {passive: false});
             card.onclick = () => selectItem(item.id);
-
             card.innerHTML = `<img src="${item.icon}" class="item-icon-img" alt="${item.name}"><div>${item.name}</div>`;
             tray.appendChild(card);
         });
@@ -561,10 +552,10 @@
             const card = document.createElement('div');
             card.className = `collection-card ${count === 0 ? 'locked' : ''}`;
             card.innerHTML = `
-                <div style="font-size:1.8rem">${item.icon}</div>
+                <div style="font-size:2rem">${item.icon}</div>
                 <div style="font-weight:bold; color:var(--gold);">${item.name}</div>
-                <div style="font-size:0.65rem; color:#ccc;">${country}</div>
-                <div style="margin-top:2px; font-size:0.7rem;">สะสมได้: ${count} ชิ้น</div>
+                <div style="font-size:0.7rem; color:#ccc;">${country}</div>
+                <div style="margin-top:4px; font-size:0.75rem;">สะสมได้: ${count} ชิ้น</div>
             `;
             grid.appendChild(card);
         });
@@ -577,7 +568,6 @@
         startGameTimer();
         spawnNextShip();
         initMediaPipe();
-        initTouchAndMouseEvents();
     }
 
     function startGameTimer() {
@@ -619,6 +609,7 @@
         showNotification(`🚢 เรือจาก${shipData.country} เข้าเทียบท่า! (35 วินาที)`);
     }
 
+    // อัปเดต UI รายการสินค้าที่เรือต้องการ (แสดงเป็นไอคอนรูปภาพขนาดเล็ก)
     function updateShipUI() {
         if (!gameState.currentShip) return;
         document.getElementById('ship-title').innerText = `🚢 ${gameState.currentShip.country}`;
@@ -628,7 +619,7 @@
         gameState.currentShip.reqItems.forEach(req => {
             const tag = document.createElement('div');
             tag.className = `req-tag ${req.fulfilled ? 'fulfilled' : ''}`;
-            tag.innerHTML = `<img src="${req.item.icon}" style="width: 18px; height: 18px; object-fit: contain;"> ${req.item.name}`;
+            tag.innerHTML = `<img src="${req.item.icon}" style="width: 14px; height: 14px; object-fit: contain;"> ${req.item.name}`;
             reqListEl.appendChild(tag);
         });
     }
@@ -681,35 +672,8 @@
             document.getElementById('seal-text').innerText = "ลากมาประทับ";
         }
         
-        // อัปเดตรูปสินค้าตัวลาก (Ghost Image) ให้ขยายใหญ่
-        document.getElementById('dragged-item-ghost').innerHTML = `<img src="${gameState.selectedItem.icon}">`;
-    }
-
-    /* Support Touch & Drag for Mobile / Tablet / Mouse */
-    function initTouchAndMouseEvents() {
-        window.addEventListener('touchmove', (e) => {
-            if (!isTouchDragging || !gameState.selectedItem) return;
-            const touch = e.touches[0];
-            cursorX = touch.clientX;
-            cursorY = touch.clientY;
-            handlePinchMove();
-        }, {passive: false});
-
-        window.addEventListener('touchend', () => {
-            if (isTouchDragging) {
-                isTouchDragging = false;
-                handlePinchEnd();
-            }
-        });
-    }
-
-    function handleTouchStartItem(e, id) {
-        selectItem(id);
-        isTouchDragging = true;
-        const touch = e.touches[0];
-        cursorX = touch.clientX;
-        cursorY = touch.clientY;
-        handlePinchMove();
+        // กำหนดรูปภาพให้ผีเสื้อ/ตัวลากตามสินค้าที่เลือก
+        document.getElementById('dragged-item-ghost').innerHTML = `<img src="${gameState.selectedItem.icon}" style="width: 48px; height: 48px; object-fit: contain;">`;
     }
 
     /* MediaPipe Hands Tracking Setup */
@@ -721,7 +685,7 @@
 
         hands.setOptions({
             maxNumHands: 1,
-            modelComplexity: 0,
+            modelComplexity: 1,
             minDetectionConfidence: 0.5,
             minTrackingConfidence: 0.5
         });
@@ -732,16 +696,15 @@
             onFrame: async () => {
                 await hands.send({ image: videoElement });
             },
-            width: 640,
-            height: 480
+            width: 1280,
+            height: 720
         });
-        camera.start().catch(err => {
-            console.log("Webcam not available, fallback to Touch/Mouse controls.");
-        });
+        camera.start();
     }
 
     function onHandResults(results) {
         const cursor = document.getElementById('hand-cursor');
+        const ghost = document.getElementById('dragged-item-ghost');
 
         if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
             const landmarks = results.multiHandLandmarks[0];
@@ -775,6 +738,7 @@
 
     function handlePinchStart() {
         if (!gameState.isPlaying) return;
+        
         const itemCards = document.querySelectorAll('.item-card');
         itemCards.forEach(card => {
             const rect = card.getBoundingClientRect();
@@ -809,11 +773,11 @@
         ghost.style.display = 'none';
 
         if (gameState.selectedItem && gameState.currentShip) {
-            const shipCardRect = document.getElementById('single-ship-card').getBoundingClientRect();
+            const shipRect = document.getElementById('single-ship-card').getBoundingClientRect();
             const shipImgRect = document.getElementById('ship-image').getBoundingClientRect();
 
             const isOverShip = (cursorX >= shipImgRect.left && cursorX <= shipImgRect.right && cursorY >= shipImgRect.top && cursorY <= shipImgRect.bottom) ||
-                               (cursorX >= shipCardRect.left && cursorX <= shipCardRect.right && cursorY >= shipCardRect.top && cursorY <= shipCardRect.bottom);
+                               (cursorX >= shipRect.left && cursorX <= shipRect.right && cursorY >= shipRect.top && cursorY <= shipRect.bottom);
 
             if (isOverShip) {
                 deliverItem();
@@ -824,16 +788,17 @@
     function deliverItem() {
         if (!gameState.selectedItem || !gameState.currentShip) return;
 
+        // หากสินค้าเป็นสินค้าผูกขาด แต่ยังไม่ได้ประทับตราพระคลัง -> หักคะแนนและเงิน
         if (gameState.selectedItem.monopoly && !gameState.isApproved) {
-            const scorePenalty = Math.floor(Math.random() * 21) + 30;
-            const coinPenalty = Math.floor(Math.random() * 11) + 10;
+            const scorePenalty = Math.floor(Math.random() * 21) + 30; // สุ่มหักคะแนน 30-50
+            const coinPenalty = Math.floor(Math.random() * 11) + 10;   // สุ่มหักเงิน 10-20
 
             gameState.score = Math.max(0, gameState.score - scorePenalty);
             gameState.coins = Math.max(0, gameState.coins - coinPenalty);
 
             playErrorSound();
             updateHUD();
-            showNotification(`⚠️ ลืมประทับตรา! หักคะแนน -${scorePenalty} และ -${coinPenalty} เหรียญ!`);
+            showNotification(`⚠️ ลืมประทับตรา! โดนปรับคะแนน -${scorePenalty} และ -${coinPenalty} เหรียญ!`);
 
             gameState.selectedItem = null;
             gameState.isApproved = false;
@@ -853,7 +818,8 @@
             updateShipUI();
             showNotification(`✅ ส่ง ${gameState.selectedItem.name} ให้เรือสำเร็จ!`);
 
-            if (gameState.currentShip.reqItems.every(r => r.fulfilled)) {
+            const allFulfilled = gameState.currentShip.reqItems.every(r => r.fulfilled);
+            if (allFulfilled) {
                 const country = gameState.currentShip.country;
                 gameState.collections[country] = (gameState.collections[country] || 0) + 1;
                 const reward = REWARDS[country];
